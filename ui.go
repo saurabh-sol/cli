@@ -37,6 +37,19 @@ const (
 	cDiffDel = "\x1b[48;2;70;20;20m"
 )
 
+// vtOK is false only when the console cannot process ANSI escapes natively
+// (very old Windows). Prompts handed to readline must then stay uncolored,
+// because readline's Windows fallback emulator understands only 8 colors.
+var vtOK = true
+
+// promptStyle colors text that will be passed to readline as a prompt.
+func promptStyle(style, s string) string {
+	if !vtOK {
+		return s
+	}
+	return style + s + cReset
+}
+
 func orange(s string) string { return cOrange + s + cReset }
 func dim(s string) string    { return cGray + s + cReset }
 func bold(s string) string   { return cBold + s + cReset }
@@ -60,7 +73,7 @@ func clearScreen() {
 
 const appName = "GoCode"
 
-var appVersion = "0.1.0" // overridden at release time via -ldflags "-X main.appVersion=..."
+var appVersion = "0.1.1" // overridden at release time via -ldflags "-X main.appVersion=..."
 
 func printBanner(cfg *Config, cwd string) {
 	lines := []string{

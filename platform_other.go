@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-func enableVT() {}
+func enableVT() bool { return true }
 
 func shellPath() string {
 	if s := os.Getenv("SHELL"); s != "" {

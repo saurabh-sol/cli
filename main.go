@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	enableVT()
+	vtOK = enableVT()
 	if len(os.Args) > 1 && (os.Args[1] == "--version" || os.Args[1] == "-v") {
 		fmt.Println(appName, appVersion)
 		return
@@ -49,15 +49,22 @@ func main() {
 		readline.PcItem("/key"), readline.PcItem("/auto"), readline.PcItem("/cwd"), readline.PcItem("/compact"),
 		readline.PcItem("/clear"), readline.PcItem("/cost"), readline.PcItem("/status"), readline.PcItem("/exit"),
 	)
-	rl, err := readline.NewEx(&readline.Config{
-		Prompt:            cOrange + cBold + "> " + cReset,
+	rlCfg := &readline.Config{
+		Prompt:            promptStyle(cOrange+cBold, "> "),
 		HistoryFile:       historyPath(),
 		HistoryLimit:      2000,
 		AutoComplete:      completer,
 		InterruptPrompt:   "^C",
 		EOFPrompt:         "",
 		HistorySearchFold: true,
-	})
+	}
+	if vtOK {
+		// The console understands ANSI natively, so bypass readline's Windows
+		// color emulator (it panics on 24-bit color codes). No-op on Unix.
+		rlCfg.Stdout = os.Stdout
+		rlCfg.Stderr = os.Stderr
+	}
+	rl, err := readline.NewEx(rlCfg)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to init terminal:", err)
 		os.Exit(1)

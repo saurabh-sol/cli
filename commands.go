@@ -259,7 +259,7 @@ func (a *Agent) pickModel(firstRun bool) {
 		fmt.Printf("  %s%s%2d.%s %s%-20s%s %s%s%s%s%s\n", marker, cOrange, i+1, cReset, cWhite+cBold, m.ID, cReset, cGray, m.Name, "  ·  "+m.Desc, price, cReset)
 	}
 	fmt.Println()
-	ans, err := a.ask(cOrange + "  Model number or id (Enter to keep " + a.cfg.Model + "): " + cReset)
+	ans, err := a.ask(promptStyle(cOrange, "  Model number or id (Enter to keep "+a.cfg.Model+"): "))
 	if err != nil {
 		return
 	}
@@ -299,7 +299,7 @@ func (a *Agent) promptAPIKey(force bool) error {
 	})
 	fmt.Println()
 	for attempt := 0; attempt < 3; attempt++ {
-		keyBytes, err := a.rl.ReadPassword(cOrange + "  API key (sk-ant-…): " + cReset)
+		keyBytes, err := a.rl.ReadPassword(promptStyle(cOrange, "  API key (sk-ant-…): "))
 		if err != nil {
 			return err
 		}

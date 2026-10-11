@@ -365,7 +365,7 @@ func (a *Agent) askPermission(tool string, in map[string]any) (bool, error) {
 	fmt.Printf("  %s[y]%s yes   %s[a]%s always for %s this session   %s[n]%s no\n",
 		cOrange, cReset, cOrange, cReset, displayName(tool), cOrange, cReset)
 
-	ans, err := a.ask(cOrange + "  › " + cReset)
+	ans, err := a.ask(promptStyle(cOrange, "  › "))
 	if err != nil {
 		return false, err
 	}

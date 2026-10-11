@@ -10,18 +10,23 @@ import (
 )
 
 // enableVT turns on ANSI escape processing and UTF-8 output in the Windows console
-// so the orange/black theme and box-drawing glyphs render correctly.
-func enableVT() {
-	for _, f := range []*os.File{os.Stdout, os.Stderr} {
+// so the orange/black theme and box-drawing glyphs render correctly. It reports
+// whether native ANSI processing is active on stdout.
+func enableVT() bool {
+	ok := false
+	for i, f := range []*os.File{os.Stdout, os.Stderr} {
 		h := windows.Handle(f.Fd())
 		var mode uint32
 		if err := windows.GetConsoleMode(h, &mode); err != nil {
 			continue
 		}
-		_ = windows.SetConsoleMode(h, mode|windows.ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+		if err := windows.SetConsoleMode(h, mode|windows.ENABLE_VIRTUAL_TERMINAL_PROCESSING); err == nil && i == 0 {
+			ok = true
+		}
 	}
 	_ = windows.SetConsoleOutputCP(65001)
 	_ = windows.SetConsoleCP(65001)
+	return ok
 }
 
 // shellName reports the shell used by the bash tool, for the system prompt.
