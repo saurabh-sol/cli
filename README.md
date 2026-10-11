@@ -76,7 +76,7 @@ Press **Ctrl+C** to stop a reply that is taking too long.
 
 | What you see | What to do |
 |---|---|
-| `Authentication failed (401)` | Your key is wrong. Type `/key` and paste it again. |
+| `Authentication failed (401)` | The key is not valid. It must come from https://console.anthropic.com/settings/keys and start with `sk-ant-api03-`. Keys from claude.ai do not work. Create a new key, then type `/key` and paste it. |
 | `Model not found (404)` | Type `/model` and pick one from the list. |
 | `gocode: command not found` | Close the terminal and open a new one. |
 | Strange characters or no colors | On Windows use **Windows Terminal** (free in the Microsoft Store). |

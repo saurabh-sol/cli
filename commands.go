@@ -313,6 +313,17 @@ func (a *Agent) promptAPIKey(force bool) error {
 		sp.Stop()
 		if err != nil {
 			printError("Key rejected: " + apiErrorMessage(err))
+			printInfo(fmt.Sprintf("Received %d characters: %s", len(key), maskKey(key)))
+			switch {
+			case strings.HasPrefix(key, "sk-ant-admin"):
+				printInfo("This is an Admin API key. It cannot call the chat API. Create a regular API key at https://console.anthropic.com/settings/keys")
+			case !strings.HasPrefix(key, "sk-ant-"):
+				printInfo("Anthropic API keys start with sk-ant-api03-. Keys from claude.ai, Claude Code logins or other sites will not work.")
+			case len(key) < 90:
+				printInfo("The key looks too short. Make sure you copied the whole key (about 108 characters).")
+			default:
+				printInfo("Check the key is still active at https://console.anthropic.com/settings/keys, or create a new one.")
+			}
 			continue
 		}
 		a.cfg.APIKey = key

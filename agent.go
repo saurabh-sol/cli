@@ -452,13 +452,25 @@ func (a *Agent) compact(ctx context.Context) error {
 	return nil
 }
 
+// apiDetail extracts the server's own error message, if any.
+func apiDetail(e *anthropic.Error) string {
+	msg := e.Error()
+	if i := strings.Index(msg, "\"message\":\""); i >= 0 {
+		rest := msg[i+len("\"message\":\""):]
+		if j := strings.Index(rest, "\""); j >= 0 {
+			return rest[:j]
+		}
+	}
+	return msg
+}
+
 // apiErrorMessage formats SDK errors for display.
 func apiErrorMessage(err error) string {
 	var apierr *anthropic.Error
 	if errors.As(err, &apierr) {
 		switch apierr.StatusCode {
 		case 401:
-			return "Authentication failed (401). Check your API key with /key."
+			return "Authentication failed (401): the API did not accept this key. " + apiDetail(apierr)
 		case 403:
 			return "Permission denied (403): " + apierr.Error()
 		case 404:

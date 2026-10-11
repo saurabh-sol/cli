@@ -73,7 +73,7 @@ func clearScreen() {
 
 const appName = "GoCode"
 
-var appVersion = "0.1.1" // overridden at release time via -ldflags "-X main.appVersion=..."
+var appVersion = "0.1.2" // overridden at release time via -ldflags "-X main.appVersion=..."
 
 func printBanner(cfg *Config, cwd string) {
 	lines := []string{
