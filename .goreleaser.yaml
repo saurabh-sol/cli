@@ -1,0 +1,29 @@
+version: 2
+project_name: gocode
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - id: gocode
+    main: .
+    binary: gocode
+    env: [CGO_ENABLED=0]
+    goos: [darwin, linux, windows]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w -X main.appVersion={{.Version}}
+archives:
+  - id: default
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files: [README.md, LICENSE]
+checksum:
+  name_template: checksums.txt
+changelog:
+  use: github
+  sort: asc
+release:
+  draft: false
+  prerelease: auto
